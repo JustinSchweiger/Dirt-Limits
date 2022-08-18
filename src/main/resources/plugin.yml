@@ -1,0 +1,63 @@
+name: DirtLimits
+version: '${version}'
+main: net.dirtcraft.plugins.dirtlimits.DirtLimits
+api-version: 1.16
+prefix: DirtLimits
+authors: [ dejustinhd ]
+description: Adds configurable limits to specific blocks.
+commands:
+    dirtlimit:
+        description: Main command for DirtLimits.
+        aliases: [ limit ]
+
+permissions:
+    dirtlimits.bypass:
+        description: Allows players to bypass limits.
+    dirtlimits.base:
+        description: Allows players to use the base command.
+    dirtlimits.limit.add:
+        description: Allows players to add limits.
+    dirtlimits.limit.remove:
+        description: Allows players to remove limits.
+    dirtlimits.limit.edit:
+        description: Allows players to change the amount and display name of limits.
+    dirtlimits.limit.list:
+        description: Allows players to list their own limits.
+    dirtlimits.limit.list.other:
+        description: Allows players to list limits of other players.
+    dirtlimits.player.reset:
+        description: Allows players to reset someones limits entirely.
+    dirtlimits.player.edit:
+        description: Allows players to edit someones trackers.
+    dirtlimits.common:
+        description: Collection of common permissions normal players should have.
+        children:
+            dirtlimits.base: true
+            dirtlimits.limit.list: true
+    dirtlimits.helper:
+        description: Collection of permissions helpers should have.
+        children:
+            dirtlimits.base: true
+            dirtlimits.limit.list: true
+            dirtlimits.limit.list.other: true
+    dirtlimits.moderator:
+        description: Collection of permissions moderators should have.
+        children:
+            dirtlimits.base: true
+            dirtlimits.limit.list: true
+            dirtlimits.limit.list.other: true
+            dirtlimits.bypass: true
+            dirtlimits.limit.edit: true
+            dirtlimits.player.edit: true
+    dirtlimits.admin:
+        description: Collection of permissions admins should have.
+        children:
+            dirtlimits.bypass: true
+            dirtlimits.base: true
+            dirtlimits.limit.add: true
+            dirtlimits.limit.remove: true
+            dirtlimits.limit.edit: true
+            dirtlimits.limit.list: true
+            dirtlimits.limit.list.other: true
+            dirtlimits.player.reset: true
+            dirtlimits.player.edit: true
