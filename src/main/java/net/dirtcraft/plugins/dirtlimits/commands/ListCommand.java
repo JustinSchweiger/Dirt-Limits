@@ -191,7 +191,7 @@ public class ListCommand {
 			}
 		}
 		bottomBar.addExtra(pagePrev);
-		bottomBar.addExtra(ChatColor.DARK_AQUA + " " + page + ChatColor.GRAY + "  /  " + ChatColor.DARK_AQUA + maxPage + " ");
+		bottomBar.addExtra(ChatColor.DARK_AQUA + " " + page + ChatColor.GRAY + " / " + ChatColor.DARK_AQUA + maxPage + " ");
 		TextComponent pageNext;
 		if (page == maxPage) {
 			pageNext = new TextComponent(ChatColor.BLACK + " \u00BB ");
