@@ -13,13 +13,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
 public class BaseCommand implements CommandExecutor, TabCompleter {
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 		if (!sender.hasPermission(Permissions.BASE)) {
 			sender.sendMessage(Strings.NO_PERMISSION);
 			return true;
@@ -125,7 +126,7 @@ public class BaseCommand implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
 		List<String> arguments = new ArrayList<>();
 
 		if (args.length == 1) {

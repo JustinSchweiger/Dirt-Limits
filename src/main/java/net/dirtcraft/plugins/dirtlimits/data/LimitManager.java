@@ -112,7 +112,7 @@ public class LimitManager {
 
 	public static Tracker getTrackerOfPlayer(String playerName, Material block) {
 		for (Tracker tracker : trackers) {
-			if (tracker.getPlayerName().equals(playerName) && tracker.getLimitedBlock() == block) {
+			if (tracker.getPlayerName().equals(playerName) && tracker.getLimitedBlock().equals(block)) {
 				return tracker;
 			}
 		}

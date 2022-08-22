@@ -63,7 +63,6 @@ public class ListCommand {
 		}
 
 		List<Limit> limits = LimitManager.getLimits();
-		List<Tracker> trackers = LimitManager.getTrackerOfPlayer(playerName);
 		if (limits.size() == 0) {
 			sender.sendMessage(Strings.NO_LIMITS);
 			return;
@@ -80,7 +79,7 @@ public class ListCommand {
 			return;
 		}
 
-		int maxPage = (int) Math.ceil((double) trackers.size() / (double) Utilities.config.general.listEntries);
+		int maxPage = (int) Math.ceil((double) limits.size() / (double) Utilities.config.general.listEntries);
 		if (page > maxPage) {
 			sender.sendMessage(Strings.PAGE_DOES_NOT_EXIST);
 			return;
@@ -88,8 +87,8 @@ public class ListCommand {
 		
 		int start = (page - 1) * Utilities.config.general.listEntries;
 		int end = page * Utilities.config.general.listEntries;
-		if (end > trackers.size()) {
-			end = trackers.size();
+		if (end > limits.size()) {
+			end = limits.size();
 		}
 
 		sender.sendMessage(Strings.BAR_TOP);
@@ -99,38 +98,7 @@ public class ListCommand {
 		sender.sendMessage("");
 
 		for (int i = start; i < end; i++) {
-			BaseComponent[] editPlayer = new ComponentBuilder("")
-					.append(ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "\u270E" + ChatColor.DARK_GRAY + "]")
-					.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/limit " + playerName + " set " + trackers.get(i).getLimitedBlock().toString() + " <AMOUNT>"))
-					.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + "Edit the tracker for this player."))).create();
-
-			boolean noMoreLeft = trackers.get(i).getAmountPlaced() == LimitManager.getLimit(trackers.get(i).getLimitedBlock()).getAmount();
-			BaseComponent[] tracker;
-			if (noMoreLeft) {
-				if (senderEqualsPlayer) {
-					tracker = new ComponentBuilder("")
-							.append(ChatColor.AQUA + "Placed" + ChatColor.GRAY + ": " + ChatColor.RED + String.format("%02d", trackers.get(i).getAmountPlaced()) + ChatColor.GRAY + " / " + ChatColor.RED + String.format("%02d", LimitManager.getLimit(trackers.get(i).getLimitedBlock()).getAmount()))
-							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.RED + "You can't place any more of this block!")))
-							.create();
-				} else {
-					tracker = new ComponentBuilder("")
-							.append(ChatColor.AQUA + "Placed" + ChatColor.GRAY + ": " + ChatColor.RED + String.format("%02d", trackers.get(i).getAmountPlaced()) + ChatColor.GRAY + " / " + ChatColor.RED + String.format("%02d", LimitManager.getLimit(trackers.get(i).getLimitedBlock()).getAmount()))
-							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.RED + "They can't place any more of this block!")))
-							.create();
-				}
-			} else {
-				if (senderEqualsPlayer) {
-					tracker = new ComponentBuilder("")
-							.append(ChatColor.AQUA + "Placed" + ChatColor.GRAY + ": " + ChatColor.GOLD + String.format("%02d", trackers.get(i).getAmountPlaced()) + ChatColor.GRAY + " / " + ChatColor.GOLD + String.format("%02d", LimitManager.getLimit(trackers.get(i).getLimitedBlock()).getAmount()))
-							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GRAY + "You can place " + ChatColor.DARK_AQUA + (LimitManager.getLimit(trackers.get(i).getLimitedBlock()).getAmount() - trackers.get(i).getAmountPlaced()) + ChatColor.GRAY + " more of this block.")))
-							.create();
-				} else {
-					tracker = new ComponentBuilder("")
-							.append(ChatColor.AQUA + "Placed" + ChatColor.GRAY + ": " + ChatColor.GOLD + String.format("%02d", trackers.get(i).getAmountPlaced()) + ChatColor.GRAY + " / " + ChatColor.GOLD + String.format("%02d", LimitManager.getLimit(trackers.get(i).getLimitedBlock()).getAmount()))
-							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GRAY + "They can place " + ChatColor.DARK_AQUA + (LimitManager.getLimit(trackers.get(i).getLimitedBlock()).getAmount() - trackers.get(i).getAmountPlaced()) + ChatColor.GRAY + " more of this block.")))
-							.create();
-				}
-			}
+			Tracker trackerOfPlayer = LimitManager.getTrackerOfPlayer(playerName, limits.get(i).getBlock());
 
 			BaseComponent[] removeLimit = new ComponentBuilder("")
 					.append(ChatColor.DARK_GRAY + "[" + ChatColor.RED + "\u2715" + ChatColor.DARK_GRAY + "]")
@@ -141,6 +109,39 @@ public class ListCommand {
 					.append(ChatColor.DARK_GRAY + "[" + ChatColor.GREEN + "\u270E" + ChatColor.DARK_GRAY + "]")
 					.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/limit edit " + limits.get(i).getBlock().toString() + " " + limits.get(i).getAmount() + " " + limits.get(i).getDisplayName()))
 					.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GREEN + "Edit this limit."))).create();
+
+			BaseComponent[] editPlayer = new ComponentBuilder("")
+					.append(ChatColor.DARK_GRAY + "[" + ChatColor.YELLOW + "\u270E" + ChatColor.DARK_GRAY + "]")
+					.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/limit " + playerName + " set " + limits.get(i).getBlock().toString() + " <AMOUNT>"))
+					.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.YELLOW + "Edit the tracker for this player."))).create();
+
+			boolean noMoreLeft = trackerOfPlayer.getAmountPlaced() == limits.get(i).getAmount();
+			BaseComponent[] tracker;
+			if (noMoreLeft) {
+				if (senderEqualsPlayer) {
+					tracker = new ComponentBuilder("")
+							.append(ChatColor.AQUA + "Placed" + ChatColor.GRAY + ": " + ChatColor.RED + String.format("%02d", trackerOfPlayer.getAmountPlaced()) + ChatColor.GRAY + " / " + ChatColor.RED + String.format("%02d", limits.get(i).getAmount()))
+							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.RED + "You can't place any more of this block!")))
+							.create();
+				} else {
+					tracker = new ComponentBuilder("")
+							.append(ChatColor.AQUA + "Placed" + ChatColor.GRAY + ": " + ChatColor.RED + String.format("%02d", trackerOfPlayer.getAmountPlaced()) + ChatColor.GRAY + " / " + ChatColor.RED + String.format("%02d", limits.get(i).getAmount()))
+							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.RED + "They can't place any more of this block!")))
+							.create();
+				}
+			} else {
+				if (senderEqualsPlayer) {
+					tracker = new ComponentBuilder("")
+							.append(ChatColor.AQUA + "Placed" + ChatColor.GRAY + ": " + ChatColor.GOLD + String.format("%02d", trackerOfPlayer.getAmountPlaced()) + ChatColor.GRAY + " / " + ChatColor.GOLD + String.format("%02d", limits.get(i).getAmount()))
+							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GRAY + "You can place " + ChatColor.DARK_AQUA + (limits.get(i).getAmount() - trackerOfPlayer.getAmountPlaced()) + ChatColor.GRAY + " more of this block.")))
+							.create();
+				} else {
+					tracker = new ComponentBuilder("")
+							.append(ChatColor.AQUA + "Placed" + ChatColor.GRAY + ": " + ChatColor.GOLD + String.format("%02d", trackerOfPlayer.getAmountPlaced()) + ChatColor.GRAY + " / " + ChatColor.GOLD + String.format("%02d", limits.get(i).getAmount()))
+							.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GRAY + "They can place " + ChatColor.DARK_AQUA + (limits.get(i).getAmount() - trackerOfPlayer.getAmountPlaced()) + ChatColor.GRAY + " more of this block.")))
+							.create();
+				}
+			}
 
 			BaseComponent[] limit = new ComponentBuilder("")
 					.append(ChatColor.GOLD + limits.get(i).getDisplayName())
